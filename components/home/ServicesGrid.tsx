@@ -9,7 +9,7 @@ const SERVICES = [
         title: "Crowns & Bridges",
         desc: "Aesthetic master-crafted restorations using Zirconia, E.max, and precious metals.",
         link: "/",
-        image: "bg-gray-100" // Placeholder class for now
+        image: "bg-gray-100" 
     },
     {
         title: "Implant Solutions",

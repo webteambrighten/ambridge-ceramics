@@ -87,69 +87,6 @@ export default function ACAlignersPage() {
         </div>
       </section>
 
-{/* --- 3. THE AC ADVANTAGE (HIGH-TECH ROW) --- */}
-<section className="py-24 px-6 bg-[#fcfcfc] border-y border-slate-100">
-  <div className="max-w-7xl mx-auto">
-    
-    {/* Header - Simple, Wide, Clean */}
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-6">
-      <div className="max-w-xl">
-        <h2 
-          className="text-4xl md:text-5xl font-bold tracking-tighter text-slate-900" 
-          style={{ fontFamily: 'Verdana, Geneva, sans-serif' }}
-        >
-          What Sets <span className="text-emerald-600">AC</span> Apart?
-        </h2>
-      </div>
-      <p className="max-w-xs text-sm text-slate-400 font-medium leading-relaxed border-l-2 border-emerald-500 pl-4">
-        Every case is designed by technicians who understand occlusion and aesthetics.
-      </p>
-    </div>
-
-    {/* Feature Row - Clean vertical separation */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-l border-slate-200">
-      {[
-        { icon: <ShieldCheck />, title: "Orthodontist Reviewed", desc: "Comprehensive digital planning by specialists for every case." },
-        { icon: <Microscope />, title: "Technical Precision", desc: "Reviewed by skilled technicians who understand functional sustainability." },
-        { icon: <Activity />, title: "Live Support", desc: "Direct technical support for complex and interdisciplinary cases." },
-        { icon: <Monitor />, title: "Digital Planning", desc: "Focus on functional, aesthetic, and stable outcomes via advanced workflows." },
-        { icon: <Eye />, title: "3D Visualiser", desc: "Interactive module for increased patient acceptance and understanding." },
-        { icon: <DollarSign />, title: "Realistic Pricing", desc: "Affordable pricing structure for increased accessibility." }
-      ].map((feature, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="p-10 border-r border-b border-slate-200 group hover:bg-white hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-300 relative overflow-hidden"
-        >
-          {/* Subtle Accent Background */}
-          <div className="absolute top-0 left-0 w-1 h-0 bg-emerald-500 group-hover:h-full transition-all duration-500" />
-          
-          <div className="flex items-start gap-4 mb-6">
-            <div className="text-emerald-600 p-2 bg-emerald-50 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
-              {React.cloneElement(feature.icon, { size: 20, strokeWidth: 2 })}
-            </div>
-            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest pt-2">
-              {feature.title}
-            </h3>
-          </div>
-          
-          <p className="text-[13px] text-slate-500 leading-relaxed font-light">
-            {feature.desc}
-          </p>
-        </motion.div>
-      ))}
-    </div>
-
-    {/* Footer Detail */}
-    <div className="mt-12 text-right">
-      <span className="text-[9px] font-bold text-slate-300 uppercase tracking-[0.6em]">
-        Ambridge Ceramics // Clinical Division
-      </span>
-    </div>
-  </div>
-</section>
 
 {/* --- 4. THE HOLISTIC PHILOSOPHY (FULL-WIDTH SHOWCASE) --- */}
 <section className="py-0 overflow-hidden bg-white border-y border-slate-100">
@@ -239,62 +176,6 @@ export default function ACAlignersPage() {
   </div>
 </section>
 
-    {/* --- 5. CTA: PARTNERSHIP (EDITORIAL SPLIT) --- */}
-<section className="py-32 px-6 bg-white border-t border-slate-100 overflow-hidden relative">
-  {/* Subtle background element to break the white space */}
-  <div className="absolute top-0 right-0 w-1/4 h-full bg-slate-50/50 -skew-x-12 translate-x-20 pointer-events-none" />
-
-  <div className="max-w-7xl mx-auto relative z-10">
-    <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-24">
-      
-      {/* Left: Heading & Context */}
-      <div className="w-full lg:w-3/5 text-left">
-        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600 mb-6 block">
-          Strategic Alliance
-        </span>
-        <h2 
-          className="text-5xl md:text-7xl font-bold tracking-tighter text-slate-900 mb-8 leading-[0.9]" 
-          style={{ fontFamily: 'Verdana, Geneva, sans-serif' }}
-        >
-          Partnering for <br />
-          <span className="italic font-light text-slate-400 underline decoration-emerald-500/20 decoration-8 underline-offset-[12px]">
-            Patient Success.
-          </span>
-        </h2>
-        <div className="space-y-6 max-w-xl">
-          <p className="text-xl text-slate-500 font-light leading-relaxed">
-            We fully understand the challenges dentists face in achieving predictable, high-quality results for their patients. Our team is ready to support you at every stage, from initial planning to final delivery. 
-          </p>
-
-        </div>
-      </div>
-
-      {/* Right: The Invitation */}
-      <div className="w-full lg:w-2/5 flex flex-col items-start lg:items-end">
-        <div className="bg-slate-50 p-10 md:p-12 border border-slate-100 w-full hover:shadow-xl transition-all duration-500 group">
-          <p className="text-slate-600 mb-8 leading-relaxed font-light italic">
-            "Discover how partnering with Ambridge Ceramics can elevate your practice by visiting our website."
-          </p>
-          
-          <a 
-            href="https://ambridgeceramics.co.uk" 
-            target="_blank"
-            className="inline-flex items-center gap-6 px-8 py-5 bg-slate-900 text-white text-[11px] font-black uppercase tracking-[0.3em] transition-all duration-300 hover:bg-emerald-600 hover:gap-10"
-          >
-            Visit Our Website
-            <span className="text-lg">→</span>
-          </a>
-        </div>
-        
-        <div className="mt-6 flex gap-4 opacity-30 grayscale contrast-125">
-           {/* You can add small logo icons here for GDC, MHRA etc to ground the CTA */}
-           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Ambridge Ceramics Lab Workflow</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
       <Footer />
     </main>
   );

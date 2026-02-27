@@ -308,89 +308,79 @@ function MobileSwipeView() {
 
 /* ================= DESKTOP VIEW ================= */
 
-/* ================= DESKTOP VIEW ================= */
-
 function DesktopView() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const isAutoScrolling = useRef(false);
-
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
-
-  const scrollToMember = (index: number) => {
-    const el = document.querySelector(`[data-index="${index}"]`);
-    if (!el) return;
-    
-    isAutoScrolling.current = true;
-    window.scrollTo({ 
-      top: (el as HTMLElement).offsetTop - 140, 
-      behavior: "smooth" 
-    });
-
-    setTimeout(() => {
-      isAutoScrolling.current = false;
-    }, 800);
-  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !isAutoScrolling.current) {
-            const index = Number(entry.target.getAttribute("data-index"));
-            if (!Number.isNaN(index)) setActiveIndex(index);
-          }
+          if (!entry.isIntersecting) return;
+          const index = Number(entry.target.getAttribute("data-index"));
+          if (!Number.isNaN(index)) setActiveIndex(index);
         });
       },
-      { rootMargin: "-45% 0px -45% 0px", threshold: 0.1 }
+      { rootMargin: "-40% 0px -40% 0px", threshold: 0.15 }
     );
     document.querySelectorAll(".member-content-block").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (hoveredIndex === null) {
-        const nextIndex = (activeIndex + 1) % team.length;
-        setActiveIndex(nextIndex); 
-        scrollToMember(nextIndex); 
-      }
-    }, 5000); 
+    const container = scrollRef.current;
+    if (!container) return;
+    const activeThumb = container.children[activeIndex] as HTMLElement;
+    activeThumb?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [activeIndex]);
 
-    return () => clearInterval(interval);
-  }, [hoveredIndex, activeIndex]);
+  const scrollToMember = (index: number) => {
+    const el = document.querySelector(`[data-index="${index}"]`);
+    if (!el) return;
+    window.scrollTo({ top: (el as HTMLElement).offsetTop - 140, behavior: "smooth" });
+  };
 
   return (
     <main className="bg-[#f7f9fb] min-h-screen text-[#1a242f]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       <Navbar />
 
       <motion.div
-        style={{ scaleX: progress, background: team[activeIndex].accentColor }}
+        style={{ scaleX: progress }}
         className="fixed top-0 left-0 right-0 h-[2px] origin-left z-[999]"
+        style2={{ background: team[activeIndex].accentColor }}
       />
 
       <div className="flex flex-col lg:flex-row">
-        {/* LEFT - Bio Data */}
+        {/* LEFT */}
         <div className="lg:w-1/2 px-6 md:px-24 pt-44 pb-[90vh]">
           <div className="max-w-[65ch]">
-            <div className="space-y-[60vh]">
+            <div className="space-y-[55vh]">
               {team.map((member, i) => (
                 <section
                   key={i}
                   data-index={i}
                   className="member-content-block"
-                  style={{ opacity: activeIndex === i ? 1 : 0.15 }}
+                  style={{ opacity: activeIndex === i ? 1 : 0.3, transition: "opacity 0.5s" }}
                 >
+                  {/* Hoverable name with bio card */}
                   <div
                     className="relative inline-block mb-5"
                     onMouseEnter={() => setHoveredIndex(i)}
                     onMouseLeave={() => setHoveredIndex(null)}
                   >
-                    <h2 className="text-4xl md:text-6xl font-semibold tracking-tight">
+                    <motion.h2
+                      animate={{
+                        opacity: activeIndex === i ? 1 : 0.6,
+                        y: activeIndex === i ? 0 : 16,
+                      }}
+                      transition={{ duration: 0.45 }}
+                      className="text-4xl md:text-6xl font-semibold tracking-tight cursor-default"
+                    >
                       {member.name}
-                    </h2>
+                    </motion.h2>
                     <HoverBioCard member={member} visible={hoveredIndex === i && activeIndex === i} />
                   </div>
 
@@ -410,81 +400,105 @@ function DesktopView() {
           </div>
         </div>
 
-        {/* RIGHT - Sticky Image Area */}
+        {/* RIGHT STICKY */}
         <div className="hidden lg:block lg:w-1/2 h-screen sticky top-0 overflow-hidden bg-white">
-          <div className="relative w-full h-full">
-            <Image
-              src={team[activeIndex].photo}
-              alt={team[activeIndex].name}
-              fill
-              priority
-              className="object-cover object-top"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/20 to-transparent" />
-            
-            {/* SMALLER FIXED EXPERIENCE BADGE */}
-            <div className="absolute bottom-10 right-10 bg-white rounded-xl border border-gray-100 p-4 w-[160px] z-10 shadow-sm">
-              <p className="text-[8px] font-black uppercase tracking-[0.3em] mb-1.5"
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, scale: 1.04 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={team[activeIndex].photo}
+                alt={team[activeIndex].name}
+                fill
+                priority={activeIndex === 0}
+                sizes="50vw"
+                className="object-cover object-top"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/20 to-transparent" />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Floating stat card on right panel */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`stat-${activeIndex}`}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="absolute bottom-12 right-10 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-gray-100 p-5 max-w-[200px]"
+            >
+              <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-3"
                 style={{ color: team[activeIndex].accentColor }}>
                 Experience
               </p>
-              <p className="text-xl font-bold text-[#1a242f] mb-2 tracking-tight">
+              <p className="text-2xl font-semibold text-[#1a242f] mb-3 tracking-tight">
                 {team[activeIndex].stats.experience}
               </p>
               <div className="flex flex-wrap gap-1">
-                {team[activeIndex].stats.specialisms.slice(0, 1).map((s, i) => (
-                  <span key={i} className="text-[9px] font-semibold px-2 py-0.5 rounded-full text-white"
+                {team[activeIndex].stats.specialisms.slice(0, 2).map((s, i) => (
+                  <span key={i} className="text-[10px] font-medium px-2 py-0.5 rounded-full text-white"
                     style={{ backgroundColor: team[activeIndex].accentColor }}>
                     {s}
                   </span>
                 ))}
               </div>
-            </div>
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="absolute bottom-24 left-10 text-left">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.5em] text-gray-300">
+              Ambridge Ceramics
+            </p>
           </div>
         </div>
       </div>
 
-      {/* TRANSPARENT THUMB STRIP - NO ANIMATIONS */}
-      <div className="fixed bottom-0 left-0 right-0 z-[60] bg-transparent py-10 pointer-events-none">
+      {/* THUMB STRIP */}
+      <div className="fixed bottom-0 left-0 right-0 z-[60] bg-white/90 backdrop-blur-xl border-t border-gray-200 py-4">
         <div
           ref={scrollRef}
-          className="flex gap-6 px-6 overflow-x-auto no-scrollbar max-w-6xl mx-auto items-center justify-center pointer-events-auto"
+          className="flex gap-4 px-6 overflow-x-auto no-scrollbar max-w-6xl mx-auto items-center"
         >
           {team.map((m, i) => (
             <button
               key={i}
-              onClick={() => {
-                setActiveIndex(i);
-                scrollToMember(i);
-              }}
-              className="relative flex-shrink-0"
+              onClick={() => scrollToMember(i)}
+              className="relative flex-shrink-0 group"
             >
-              <div 
-                className={`w-14 h-14 rounded-xl overflow-hidden border-2 ${
-                  activeIndex === i ? "opacity-100" : "opacity-30"
-                }`}
-                style={{ 
-                  borderColor: activeIndex === i ? m.accentColor : "transparent",
-                  backgroundColor: "white" 
-                }}
-              >
+              <div className={`w-14 h-14 rounded-xl overflow-hidden transition-all duration-300 border-2 ${
+                activeIndex === i ? "scale-110" : "opacity-40 hover:opacity-80 scale-100"
+              }`}
+                style={{ borderColor: activeIndex === i ? m.accentColor : "transparent" }}>
                 <Image src={m.photo} alt={m.name} fill className="object-cover object-top" />
               </div>
-              
-              <div 
-                className={`mt-3 text-[9px] font-black uppercase tracking-widest text-center ${
-                  activeIndex === i ? "opacity-100" : "opacity-0"
-                }`}
-                style={{ color: m.accentColor }}
-              >
-                {m.name.split(" ")[0]}
-              </div>
+              {activeIndex === i && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-wider whitespace-nowrap"
+                  style={{ color: m.accentColor }}
+                >
+                  {m.name.split(" ")[0]}
+                </motion.p>
+              )}
             </button>
           ))}
         </div>
       </div>
 
       <Footer />
+
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+      `}</style>
     </main>
   );
 }
