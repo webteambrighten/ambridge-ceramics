@@ -347,12 +347,13 @@ function DesktopView() {
     <main className="bg-[#f7f9fb] min-h-screen text-[#1a242f]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       <Navbar />
 
-      <motion.div
-        style={{ scaleX: progress }}
-        className="fixed top-0 left-0 right-0 h-[2px] origin-left z-[999]"
-        style2={{ background: team[activeIndex].accentColor }}
-      />
-
+     <motion.div
+  style={{
+    scaleX: progress,
+    background: team[activeIndex].accentColor,
+  }}
+  className="fixed top-0 left-0 right-0 h-[2px] origin-left z-[999]"
+/>
       <div className="flex flex-col lg:flex-row">
         {/* LEFT */}
         <div className="lg:w-1/2 px-6 md:px-24 pt-44 pb-[90vh]">
